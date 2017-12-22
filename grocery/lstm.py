@@ -130,7 +130,8 @@ for i in range(16):
                sample_weight=sample_weights, validation_data=(xv,yv) ) 
     val_pred.append(model.predict(X_val))
     test_pred.append(model.predict(X_test))
-
+    
+n_public = 5 # Number of days in public test set
 weights=pd.concat([items["perishable"]]) * 0.25 + 1
 print("Unweighted validation mse: ", mean_squared_error(
     y_val, np.array(val_pred).squeeze(axis=2).transpose()) )
