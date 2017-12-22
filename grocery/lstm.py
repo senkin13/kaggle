@@ -126,7 +126,7 @@ for i in range(16):
     y = y_train[:, i]
     xv = X_val
     yv = y_val[:, i]
-    model.fit(X_train, y, batch_size = 1024, epochs = N_EPOCHS, verbose=2,
+    model.fit(X_train, y, batch_size = 512, epochs = N_EPOCHS, verbose=2,
                sample_weight=sample_weights, validation_data=(xv,yv) ) 
     val_pred.append(model.predict(X_val))
     test_pred.append(model.predict(X_test))
