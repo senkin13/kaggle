@@ -4,11 +4,12 @@ import numpy as np
 from sklearn.metrics import mean_squared_error
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
+from keras.layers import LSTM
 from keras import callbacks
 from keras.callbacks import ModelCheckpoint
 
 df_train = pd.read_csv(
-    '../input/train.csv', usecols=[1, 2, 3, 4, 5],
+    'input/train.csv', usecols=[1, 2, 3, 4, 5],
     dtype={'onpromotion': bool},
     converters={'unit_sales': lambda u: np.log1p(
         float(u)) if float(u) > 0 else 0},
@@ -17,7 +18,7 @@ df_train = pd.read_csv(
 )
 
 df_test = pd.read_csv(
-    "../input/test.csv", usecols=[0, 1, 2, 3, 4],
+    "input/test.csv", usecols=[0, 1, 2, 3, 4],
     dtype={'onpromotion': bool},
     parse_dates=["date"]  # , date_parser=parser
 ).set_index(
@@ -25,7 +26,7 @@ df_test = pd.read_csv(
 )
 
 items = pd.read_csv(
-    "../input/items.csv",
+    "input/items.csv",
 ).set_index("item_nbr")
 
 df_2017 = df_train.loc[df_train.date>=pd.datetime(2017,1,1)]
@@ -93,26 +94,10 @@ del X_l, y_l
 X_val, y_val = prepare_dataset(date(2017, 7, 26))
 X_test = prepare_dataset(date(2017, 8, 16), is_train=False)
 
+stores_items = pd.DataFrame(index=df_2017.index)
+#stores_items = pd.read_csv(indir + 'stores_items.csv', index_col=['store_nbr','item_nbr'])
+test_ids = df_test[['id']].set_index(['store_nbr', 'item_nbr', 'date'] )
 
-X_train.to_csv('X_train.csv', float_format='%.6f', index=None)
-pd.DataFrame(y_train).to_csv('y_train.csv', float_format='%.6f', index=None)
-X_val.to_csv('X_val.csv', float_format='%.6f', index=None)
-pd.DataFrame(y_val).to_csv('y_val.csv', float_format='%.6f', index=None)
-X_test.to_csv('X_test.csv', float_format='%.6f', index=None)
-pd.DataFrame(index=df_2017.index).to_csv('stores_items.csv')
-df_test[['id']].to_csv('test_ids.csv')
-
-indir = 'prepared/'
-indir2 = 'input/'
-X_test = pd.read_csv(indir + 'X_test.csv')
-X_val = pd.read_csv(indir + 'X_val.csv')
-X_train = pd.read_csv(indir + 'X_train.csv')
-y_train = np.array(pd.read_csv(indir + 'y_train.csv'))
-y_val = np.array(pd.read_csv(indir + 'y_val.csv'))
-stores_items = pd.read_csv(indir + 'stores_items.csv', index_col=['store_nbr','item_nbr'])
-test_ids = pd.read_csv( indir + 'test_ids.csv',  parse_dates=['date']).set_index(
-                        ['store_nbr', 'item_nbr', 'date'] )
-items = pd.read_csv( indir2 + 'items.csv' ).set_index("item_nbr")
 items = items.reindex( stores_items.index.get_level_values(1) )
 
 X_train = X_train.as_matrix()
@@ -121,8 +106,6 @@ X_val = X_val.as_matrix()
 X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))
 X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))
 X_val = X_val.reshape((X_val.shape[0], 1, X_val.shape[1]))
-
-from keras.layers import LSTM
 
 model = Sequential()
 model.add(LSTM(32, input_shape=(X_train.shape[1],X_train.shape[2])))
