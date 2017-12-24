@@ -95,8 +95,7 @@ X_val, y_val = prepare_dataset(date(2017, 7, 26))
 X_test = prepare_dataset(date(2017, 8, 16), is_train=False)
 
 stores_items = pd.DataFrame(index=df_2017.index)
-#stores_items = pd.read_csv(indir + 'stores_items.csv', index_col=['store_nbr','item_nbr'])
-test_ids = df_test[['id']].set_index(['store_nbr', 'item_nbr', 'date'] )
+test_ids = df_test[['id']]
 
 items = items.reindex( stores_items.index.get_level_values(1) )
 
