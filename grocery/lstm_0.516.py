@@ -108,6 +108,8 @@ X_val = X_val.reshape((X_val.shape[0], 1, X_val.shape[1]))
 
 model = Sequential()
 model.add(LSTM(32, input_shape=(X_train.shape[1],X_train.shape[2])))
+model.add(Dropout(.1))
+model.add(Dense(32))
 model.add(Dropout(.2))
 model.add(Dense(1))
 model.compile(loss = 'mse', optimizer='adam', metrics=['mse'])
