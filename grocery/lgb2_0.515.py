@@ -136,8 +136,18 @@ for i in range(16):
     test_pred.append(bst.predict(
         X_test, num_iteration=bst.best_iteration or MAX_ROUNDS))
 
-print("Validation mse:", mean_squared_error(
-    y_val, np.array(val_pred).transpose()))
+n_public = 5 # Number of days in public test set
+weights=pd.concat([items["perishable"]]) * 0.25 + 1
+print("Unweighted validation mse: ", mean_squared_error(
+    y_val, np.array(val_pred).transpose()) )
+print("Full validation mse:       ", mean_squared_error(
+    y_val, np.array(val_pred).transpose(), sample_weight=weights) )
+print("'Public' validation mse:   ", mean_squared_error(
+    y_val[:,:n_public], np.array(val_pred).transpose()[:,:n_public], 
+    sample_weight=weights) )
+print("'Private' validation mse:  ", mean_squared_error(
+    y_val[:,n_public:], np.array(val_pred).transpose()[:,n_public:], 
+    sample_weight=weights) )
 
 print("Making submission...")
 y_test = np.array(test_pred).transpose()
