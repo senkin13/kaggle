@@ -327,14 +327,21 @@ TODO
 
 # Model Ensemble
 ## Now
-### fist layer
+### fist layer - 0.513
+```
 lgb2*0.4 + lstm*0.3 + ma*0.3
-### sencond layer
+```
+### sencond layer - 0.513+
+```
 layer1*0.6 + lgb3*0.2 + lgb4*0.2 
-### third layer
-layer2*0.8 + 0.2*lgb5 
-### fourth layer
-layer3*0.5 + 0.2*lgb8 
-
+```
+### third layer - 0.511
+```
+layer2*0.8 + lgb5*0.2
+```
+### fourth layer - 0.510
+```
+layer3*0.5 + lgb8*0.5 
+```
 ## Optimized
 TODO
