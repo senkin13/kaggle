@@ -8,6 +8,7 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
   
 # Feature engineering
 ## unit_sales's and promotion's statistics variable 
+'''
 mean_7_2017: 5692166.96
 mean_14_2017: 3324304.48
 ahead7_mean_5: 1935866.46
@@ -294,6 +295,7 @@ promo_12: 37.27
 promo_11: 34.69
 promo_10: 17.81
 bf_unpromo_15: 0.00
+'''
 
 # Model Selection
 1. MA
