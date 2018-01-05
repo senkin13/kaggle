@@ -1,5 +1,5 @@
 # Summary
-predict unit_sales of each store's each item 
+predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item 
 
 # Prepocessing
 1. only use 2017 data
