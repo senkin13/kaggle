@@ -298,9 +298,9 @@ bf_unpromo_15: 0.00
 ```
 
 # Model Selection
-1. MA
-2. LSTM
-3. LightGBM 
+1. MA 0.526
+2. LSTM 0.516
+3. LightGBM 0.515, 0.514, 0.514, 0.511
 4. TODO(Xgboost catboost nn)
 
 # Model Evaluation
