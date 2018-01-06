@@ -1,4 +1,6 @@
 from sklearn.model_selection import GridSearchCV
+import lightgbm as lgb
+
 estimator = lgb.LGBMRegressor()
 param_grid = {
     'num_leaves': [31, 33, 63, 65, 127, 129],
