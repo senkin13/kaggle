@@ -4,12 +4,20 @@ df_oil = pd.read_csv(
 )
 
 df_oil_train = pd.merge(df2017, df_oil, how='left', on=['date'])
+df_oil_test = pd.merge(df_test, df_oil, how='left', on=['date'])
 
-df_oil = df_oil_train.set_index(
+df_oil_train = df_oil_train.set_index(
     ["store_nbr", "item_nbr", "date"])[["dcoilwtico"]].unstack(
         level=-1).fillna(method='bfill')
+df_oil_train.columns = df_oil_train.columns.get_level_values(1)
+df_oil_test = df_oil_test.set_index(
+    ["store_nbr", "item_nbr", "date"])[["dcoilwtico"]].unstack(
+        level=-1).fillna(method='bfill')
+df_oil_test.columns = df_oil_test.columns.get_level_values(1)
+df_oil_test = df_oil_test.reindex(df_oil_train.index).fillna(bfill)
+df_oil = pd.concat([df_oil_train, df_oil_test], axis=1)
 
-df_oil.columns = df_oil.columns.get_level_values(1)
+
 
 
         "oil_day_1_2017": get_timespan(df_oil, t2017, 1, 1).values.ravel(), 
