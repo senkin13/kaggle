@@ -56,9 +56,9 @@ layer1*0.6 + lgb3*0.2 + lgb4*0.2
 ```
 layer2*0.8 + lgb5*0.2
 ```
-### fourth layer - 0.510
+### fourth layer - 0.509
 ```
-layer3*0.5 + lgb8*0.5 
+layer3*0.4 + lgb13*0.6 
 ```
 ## Optimized
 TODO
