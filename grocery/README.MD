@@ -13,9 +13,11 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 
 # Model Selection
 1. MA 0.526
-2. LSTM 0.516
-3. LightGBM 0.515, 0.514, 0.514, 0.511, 0.510
-4. TODO(Xgboost catboost nn)
+2. RNN(LSTM) 0.516
+3. LightGBM 0.510
+4. Xgboost 0.511
+5. catboost
+6. DNN(MLP) 
 
 # Model Evaluation
 ## Train
@@ -34,7 +36,20 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 2017.8.21 - 2017.8.31 (11 days)
 
 # Hyper parameter tuning
-TODO
+```
+params = {
+    'num_leaves': 33,
+    'objective': 'regression',
+    'min_data_in_leaf': 250,
+    'max_bin': 512,
+    'learning_rate': 0.02,
+    'feature_fraction': 0.8,
+    'bagging_fraction': 0.8,
+    'bagging_freq': 2,
+    'metric': 'l2_root',
+    'num_threads': 8   
+}
+```
 
 # Bagging
 ## change train and val dataset
@@ -54,6 +69,8 @@ layer1*0.6 + lgb3*0.2 + lgb4*0.2
 ```
 ### third layer - 0.511
 ```
+
+# 
 layer2*0.8 + lgb5*0.2
 ```
 ### fourth layer - 0.509
@@ -62,3 +79,6 @@ layer3*0.4 + lgb13*0.6
 ```
 ## Optimized
 TODO
+
+# Hint
+Using lgb-gpu will create different results by running model 
