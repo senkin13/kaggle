@@ -73,6 +73,16 @@ df_2017.columns = df_2017.columns.get_level_values(1)
   
 items =  df_items.set_index("item_nbr").reindex(df_2017.index.get_level_values(1))
 
+#create store id feature
+df_store = df2017.set_index(
+    ["store_nbr", "item_nbr", "date"])[["store"]].unstack(
+        level=-1).fillna(-1)
+df_store.columns = df_store.columns.get_level_values(1)
+df_store['store'] = df_store.max(axis=1)
+df_store = df_store['store']
+df_store_train2 = pd.get_dummies(df_store, columns=['store'], prefix='store', drop_first=True, sparse=True)
+del df_store
+
 # merge train,test with items
 df_items_train = pd.merge(df2017, df_items, how='left', on=['item_nbr'])
 
@@ -292,6 +302,8 @@ def prepare_dataset(t2017, is_train=True):
     for c in df_perishable_train2.columns:
         X[c] = df_perishable_train2[c].values        
 
+    for c in df_store_train2.columns:
+        X[c] = df_store_train2[c].values 
     for c in df_city_train2.columns:
         X[c] = df_city_train2[c].values
     for c in df_state_train2.columns:
