@@ -6,6 +6,7 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 2. fill unit_sales's nan to 0,fill promotion's nan to false
 3. transform train and test data to special format,one row is one item's info, column is date's unit_sales or onpromotion
 4. add item,store metadata catagorial features, using one hot encoder
+5. use future 16 days oil price as feature
   
 # Feature engineering
 ## unit_sales's and promotion's statistics variable 
@@ -15,13 +16,13 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 1. MA 0.526
 2. RNN(LSTM) 0.516
 3. LightGBM 0.510
-4. Xgboost 0.511
-5. catboost
-6. DNN(MLP) 
 
 # Model Evaluation
 ## Train
-2017.6.14, 2017.6.21, 2017.6.28, 2017.7.5, 2017.7.12, 2017.7.19
+1)2017.6.14, 2017.6.21, 2017.6.28, 2017.7.5, 2017.7.12, 2017.7.19
+2)2017.6.7, 2017.6.14, 2017.6.21, 2017.6.28, 2017.7.5, 2017.7.12
+3)2017.5.31, 2017.6.7, 2017.6.14, 2017.6.21, 2017.6.28, 2017.7.5
+
 
 ## Validation
 ### public Validation
@@ -38,11 +39,11 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 # Hyper parameter tuning
 ```
 params = {
-    'num_leaves': 33,
+    'num_leaves': 65,
     'objective': 'regression',
     'min_data_in_leaf': 250,
-    'max_bin': 512,
-    'learning_rate': 0.02,
+    'max_bin': 256,
+    'learning_rate': 0.015,
     'feature_fraction': 0.8,
     'bagging_fraction': 0.8,
     'bagging_freq': 2,
@@ -52,33 +53,13 @@ params = {
 ```
 
 # Bagging
-## change train and val dataset
-2017.6.7, 2017.6.14, 2017.6.21, 2017.6.28, 2017.7.5, 2017.7.12 - 2017.7.19
+## change train and val dataset dynamicly by best local cv scores
 
-2017.5.31, 2017.6.7, 2017.6.14, 2017.6.21, 2017.6.28, 2017.7.5 - 2017.7.12
 
 # Model Ensemble
-## Now
-### fist layer - 0.513
+## 
+
 ```
-lgb2*0.4 + lstm*0.3 + ma*0.3
-```
-### sencond layer - 0.513+
-```
-layer1*0.6 + lgb3*0.2 + lgb4*0.2 
-```
-### third layer - 0.511
+lgb['unit_sales']*0.6 + ma['unit_sales']*0.2 + lstm['unit_sales']*0.2
 ```
 
-# 
-layer2*0.8 + lgb5*0.2
-```
-### fourth layer - 0.509
-```
-layer3*0.4 + lgb13*0.6 
-```
-## Optimized
-TODO
-
-# Hint
-Using lgb-gpu will create different results by running model 
