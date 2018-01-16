@@ -648,3 +648,28 @@ for i in range(3):
         X_val, num_iteration=bst.best_iteration or MAX_ROUNDS))
     test_pred.append(bst.predict(
         X_test, num_iteration=bst.best_iteration or MAX_ROUNDS))
+
+from sklearn.metrics import mean_squared_error
+n_public = 5 # Number of days in public test set
+weights=pd.concat([items["perishable"]]) * 0.25 + 1
+print("Full Validation mse:", mean_squared_error(
+    y_val, np.array(val_pred).transpose()))
+print("Public Validation mse:", mean_squared_error(
+    y_val[:,:n_public], np.array(val_pred).transpose()[:,:n_public]))
+print("Private Validation mse:", mean_squared_error(
+    y_val[:,n_public:], np.array(val_pred).transpose()[:,n_public:]))
+
+print("Making submission...")
+y_test = np.array(test_pred).transpose()
+df_preds = pd.DataFrame(
+    y_test, index=df_2017.index,
+    columns=pd.date_range("2017-08-16", periods=16)
+).stack().to_frame("unit_sales")
+df_preds.index.set_names(["store_nbr", "item_nbr", "date"], inplace=True)
+
+submission = df_test.set_index(
+    ["store_nbr", "item_nbr", "date"])[["id"]].join(df_preds, how="left").fillna(0).reset_index()
+submission["unit_sales"] = np.clip(np.expm1(submission["unit_sales"]), 0, 10000)
+submission.loc[~submission.item_nbr.isin(item_nbr_u),'unit_sales']=0
+submission[['id','unit_sales']].to_csv('lgb-final.csv', float_format='%.6f', index=None)
+    
