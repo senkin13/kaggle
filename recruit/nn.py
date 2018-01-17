@@ -160,7 +160,7 @@ full_df.index = df_index
 train = full_df[full_df['cat']=='train']
 test = full_df[full_df['cat']=='test']    
     
-drop_cols = ['cat','id', 'air_store_id', 'visit_date','visitors','longitude','latitude']
+drop_cols = ['cat','id', 'air_store_id', 'visit_date','visitors']
 
 targets = train['visitors']
 train = train.drop(train[drop_cols],axis=1)
@@ -173,7 +173,7 @@ print('test',test.shape)
 print(targets.shape)
 
 from sklearn.model_selection import train_test_split
-train, valid, y_train, y_valid = train_test_split(train, targets, test_size=0.2, random_state=137)
+train, valid, y_train, y_valid = train_test_split(train, targets, test_size=0.15, random_state=0)
 
 ##### 2 hidden layer network, relu activations, adam optimizer, mse loss function #####
 #######################################################################################
@@ -206,18 +206,21 @@ stop_callback = EarlyStopping(monitor='val_loss', min_delta=0, patience=3, verbo
 filepath = 'best_wt_recruit_new.hdf5'
 checkpoint = ModelCheckpoint(filepath=filepath,monitor='val_loss',save_best_only=True,mode='min')
     
-dropt = .25
+model.add(Dense(512,init='he_normal',input_shape=(train.shape[1],)))
+model.add(PReLU())
+model.add(BatchNormalization())
+model.add(Dropout(0.5)) 
 
-model = Sequential()
-model.add(Dense(300,activation='relu',input_shape=(train.shape[1],)))
-model.add(Dropout(dropt)) 
-model.add(Dense(300,activation='relu'))
-model.add(Dropout(dropt))    
-model.add(Dense(1,activation='relu'))
+model.add(Dense(128,init='he_normal'))
+model.add(PReLU())
+model.add(BatchNormalization())
+model.add(Dropout(0.5))    
 
-model.compile(loss='mse', optimizer=adam)
+model.add(Dense(1,init='he_normal'))
+
+model.compile(loss='mse', optimizer=opt)
 # fit network
-model.fit(np.array(train), np.array(y_train), epochs=100, batch_size=256, validation_data=(np.array(valid), np.array(y_valid)),
+model.fit(np.array(train), np.array(y_train), epochs=200, batch_size=512, validation_data=(np.array(valid), np.array(y_valid)),
             verbose=2, callbacks=[stop_callback, checkpoint], shuffle=False)
 
 model.load_weights('best_wt_recruit_new.hdf5')
