@@ -9,7 +9,20 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 5. use future 16 days oil price as feature
   
 # Feature engineering
-## unit_sales's and promotion's statistics variable 
+
+## basic
+- onpromotion
+- oil
+## statitical
+- mean, median, max, min, std of time window sales
+- summary of time window onpromotion
+## categorial
+- store_nbr
+- family
+- class
+- state
+- city
+- cluster
 
 
 # Model Selection
@@ -23,6 +36,7 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 2)2017.6.7, 2017.6.14, 2017.6.21, 2017.6.28, 2017.7.5, 2017.7.12
 3)2017.5.31, 2017.6.7, 2017.6.14, 2017.6.21, 2017.6.28, 2017.7.5
 
+- select the best train data for each day by local cv score
 
 ## Validation
 ### public Validation
@@ -58,7 +72,6 @@ params = {
 
 # Model Ensemble
 ## 
-
 ```
 lgb['unit_sales']*0.6 + ma['unit_sales']*0.2 + lstm['unit_sales']*0.2
 ```
