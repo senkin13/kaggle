@@ -11,6 +11,7 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 # Feature engineering
 
 ## basic
+- unit_sales
 - onpromotion
 - oil
 ## statitical
@@ -23,6 +24,7 @@ predict 2017.8.16 - 2017.8.30 (16 days) unit_sales of each store's each item
 - state
 - city
 - cluster
+- type
 
 
 # Model Selection
