@@ -4,6 +4,7 @@ from sklearn import *
 from datetime import datetime
 from sklearn.preprocessing import OneHotEncoder,LabelEncoder
 
+date_info['flg'] = date_info.apply((lambda x:x.day_of_week=='Sunday' or x.day_of_week=='Saturday' or x.holiday_flg==1),axis=1)
 
 # holiday
 air_hol_train = air_visit_lbl.set_index(
