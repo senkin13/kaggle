@@ -4,6 +4,20 @@ from sklearn import *
 from datetime import datetime
 from sklearn.preprocessing import OneHotEncoder,LabelEncoder
 
+
+# holiday
+air_hol_train = air_visit_lbl.set_index(
+    ["air_store_id", "visit_date"])[["flg"]].unstack(
+        level=-1).fillna(False)
+air_hol_train.columns = air_hol_train.columns.get_level_values(1)
+air_hol_test = sub.set_index(
+    ["air_store_id", "visit_date"])[["flg"]].unstack(
+    level=-1).fillna(False)
+air_hol_test.columns = air_hol_test.columns.get_level_values(1)
+air_hol_test = air_hol_test.reindex(air_hol_train.index).fillna(False)
+air_hol = pd.concat([air_hol_train, air_hol_test], axis=1)
+
+
 print ('Loading Data')
 air_visit = pd.read_csv('input/air_visit_data.csv', parse_dates=['visit_date'], converters={'visitors': lambda u: np.log1p(
         float(u)) if float(u) > 0 else 0})
