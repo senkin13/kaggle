@@ -431,8 +431,8 @@ callbacks = [
 model.fit(X_train, y_train, batch_size = 512, epochs = N_EPOCHS, verbose=2,
                validation_data=(X_valid,y_valid), callbacks=callbacks ) 
 
-val_pred = np.exp(model.predict(np.array(X_valid)))
-test_pred = np.exp(model.predict(np.array(X_test)))
+val_pred = model.predict(np.array(X_valid))
+test_pred = model.predict(np.array(X_test))
 
 from sklearn.metrics import mean_squared_error
 def RMSLE(y, pred):
