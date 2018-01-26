@@ -397,11 +397,11 @@ from keras import optimizers
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 
 from sklearn.cross_validation import train_test_split  
-X_train, X_valid, y_train, y_valid = train_test_split(train, targets, test_size=0.15, random_state=0)
+X_train, X_valid, y_train, y_valid = train_test_split(train, label, test_size=0.15, random_state=0)
 
 
 X_train = X_train.as_matrix()
-X_test = test.as_matrix()
+X_test = X_test.as_matrix()
 X_valid = X_valid.as_matrix()
 X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))
 X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))
@@ -430,26 +430,18 @@ callbacks = [
         ]
 model.fit(X_train, y_train, batch_size = 512, epochs = N_EPOCHS, verbose=2,
                validation_data=(X_valid,y_valid), callbacks=callbacks ) 
-# get validation score
-def rmsle(real, predicted):
-    sum=0.0
-    for x in range(len(predicted)):
-        if predicted[x]<0 or real[x]<0: #check for negative values
-            continue
-        p = np.log(predicted[x]+1)
-        r = np.log(real[x]+1)
-        sum = sum + (p - r)**2
-    return (sum/len(predicted))**0.5
 
-pred = np.exp(model.predict(np.array(X_valid)))
-score = rmsle(np.exp(np.array(y_valid)), pred)
+val_pred = np.exp(model.predict(np.array(X_valid)))
+test_pred = np.exp(model.predict(np.array(X_test)))
+
+from sklearn.metrics import mean_squared_error
+def RMSLE(y, pred):
+    return mean_squared_error(y, pred)**0.5
+
+score = RMSLE(y_valid, val_pred)
 print('score:',score)
 
-# get predictions
-prediction = np.exp(model.predict(np.array(test)))
-
-nn_df = pd.DataFrame(prediction,columns=['visitors'],index=test_index)
-print(nn_df.head())
-nn_df.to_csv('lstm.csv')
-
+result = pd.DataFrame(test_pred, columns=["visitors"],index=test_id)   
+result['visitors'] = np.expm1(result['visitors'])
+result.to_csv('lstm.csv', index=True)
 print('done')
