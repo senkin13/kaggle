@@ -387,7 +387,7 @@ X_test = predict_data
 
 print ('Preprocessing Finished')
 
-##### 2 hidden layer network, relu activations, adam optimizer, mse loss function #####
+##### 2 hidden layer network, prelu activations, adam optimizer, mse loss function #####
 #######################################################################################
 
 np.random.seed(0)
