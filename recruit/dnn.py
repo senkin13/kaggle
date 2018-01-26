@@ -4,8 +4,7 @@ from sklearn import *
 from datetime import datetime
 from sklearn.preprocessing import OneHotEncoder,LabelEncoder
 from sklearn.preprocessing import StandardScaler
-from geopy.distance import great_circle
-#, parse_dates=['visit_date']
+
 print ('Loading Data')
 air_visit = pd.read_csv('input/air_visit_data.csv', converters={'visitors': lambda u: np.log1p(
         float(u)) if float(u) > 0 else 0})
@@ -246,30 +245,6 @@ prep_df = df_lbl_enc(prep_df)
 #label = np.log1p(prep_df['visitors'].values)
 label = prep_df['visitors'].values
 prep_df = prep_df.drop(['visit_date','visitors'], axis=1)
-
-all_features = list(prep_df)
-cat_features = ['year','month','day','dow','air_genre_name','air_area_name_province','air_area_name_city','air_area_name_ward']
-num_features = []
-for c in all_features:
-    if c not in cat_features:
-        num_features.append(c)
-        
-prep_df = pd.get_dummies(prep_df, columns=cat_features, drop_first=True, sparse=True)
-
-from scipy.special import erfinv
-def rank_gauss(x):
-    # x is numpy vector
-    N = x.shape[0]
-    temp = x.argsort()
-    rank_x = temp.argsort() / N
-    rank_x -= rank_x.mean()
-    rank_x *= 2 # rank_x.max(), rank_x.min() should be in (-1, 1)
-    efi_x = erfinv(rank_x) # np.sqrt(2)*erfinv(rank_x)
-    efi_x -= efi_x.mean()
-    return efi_x
-
-for col in num_features:
-    prep_df[col] = rank_gauss(np.array(prep_df[col]))
     
 train = prep_df
 
@@ -377,18 +352,49 @@ predict_data.fillna(-1, inplace=True)
 predict_data = df_lbl_enc(predict_data)
 predict_data = predict_data.drop(['visit_date','visitors'], axis=1)
 
-predict_data = pd.get_dummies(predict_data, columns=cat_features, drop_first=True, sparse=True)
-
-for col in num_features:
-    predict_data[col] = rank_gauss(np.array(predict_data[col]))
-
 X_test = predict_data
 #X_test = sc.transform(X_test)
 
 print ('Preprocessing Finished')
 
-##### 2 hidden layer network, prelu activations, adam optimizer, mse loss function #####
-#######################################################################################
+#############################preprocess steps to feed into the network###########################
+train['cat'] = 'train'
+X_test['cat'] = 'test'
+
+all_df = pd.concat((train,X_test), axis=0, ignore_index=False) 
+
+all_features = list(all_df)
+cat_features = ['year','month','day','dow','air_genre_name','air_area_name_province','air_area_name_city','air_area_name_ward']
+num_features = []
+for c in all_features:
+    if c not in cat_features:
+        if c not in ['cat']:
+            num_features.append(c)
+        
+all_df = pd.get_dummies(all_df, columns=cat_features, drop_first=True, sparse=False)
+
+from scipy.special import erfinv
+def rank_gauss(x):
+    # x is numpy vector
+    N = x.shape[0]
+    temp = x.argsort()
+    rank_x = temp.argsort() / N
+    rank_x -= rank_x.mean()
+    rank_x *= 2 # rank_x.max(), rank_x.min() should be in (-1, 1)
+    efi_x = erfinv(rank_x) # np.sqrt(2)*erfinv(rank_x)
+    efi_x -= efi_x.mean()
+    return efi_x
+
+for col in num_features:
+    all_df[col] = rank_gauss(np.array(all_df[col]))
+
+train = all_df[all_df['cat'] == 'train']
+X_test = all_df[all_df['cat'] == 'test']
+
+train = train.drop(['cat'],axis=1)
+X_test = X_test.drop(['cat'],axis=1)
+
+#############################2 hidden layer network, prelu activations, adam optimizer, mse loss function ##########################################################
 
 np.random.seed(0)
 from keras.models import Sequential
@@ -397,9 +403,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from keras.models import load_model
 from keras import optimizers
 from keras.layers.advanced_activations import PReLU
-from hyperas.distributions import choice, uniform, conditional
-from hyperopt import Trials, STATUS_OK, tpe
-from hyperas import optim
+from keras.layers.normalization import BatchNormalization
 from sklearn.cross_validation import train_test_split 
 import h5py
 from keras import backend
@@ -449,17 +453,17 @@ model.fit(np.array(X_train), np.array(y_train), epochs=200, batch_size=256, vali
 
 model.load_weights('best_wt_recruit_new.hdf5')
 
-# get validation score
-pred = np.exp(model.predict(np.array(X_valid)))
-score = rmsle(np.exp(np.array(y_valid)), pred)
+val_pred = model.predict(np.array(X_valid))
+test_pred = model.predict(np.array(X_test))
 
+from sklearn.metrics import mean_squared_error
+def RMSLE(y, pred):
+    return mean_squared_error(y, pred)**0.5
+
+score = RMSLE(y_valid, val_pred)
 print('score:',score)
 
-# get predictions
-prediction = np.exp(model.predict(np.array(test)))
-
-nn_df = pd.DataFrame(prediction,columns=['visitors'],index=test_index)
-print(nn_df.head())
-nn_df.to_csv('dnn.csv')
-
+result = pd.DataFrame(test_pred, columns=["visitors"],index=test_id)   
+result['visitors'] = np.expm1(result['visitors'])
+result.to_csv('dnn.csv', index=True)
 print('done')
