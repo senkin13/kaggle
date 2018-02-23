@@ -29,6 +29,10 @@
 
 # Model
 ## Traditional 
+Ridge Regression
+Logistic Regression
+Lightgbm
+FM_FTRL
 
 ## Neural Network
 CNN
