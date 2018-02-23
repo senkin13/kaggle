@@ -1,3 +1,7 @@
+# Library
+sklearn.feature_extraction.text
+keras.preprocessing.text
+
 # Preprocessing
 - stopwords
 - lower
