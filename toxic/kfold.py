@@ -43,3 +43,37 @@ for i in label_cols:
         y_tra,y_val = y_1[train_index],y_1[val_index]
         X_tra.to_csv('kfold/train_' + str(i) + '_1_' + str(ii) + '.csv', index=False)
         X_val.to_csv('kfold/validation_' + str(i) + '_1_' + str(ii) + '.csv', index=False) 
+
+ 
+class RocAucEvaluation(Callback):
+    def __init__(self, filepath, validation_data=(), interval=10, max_epoch = 20):
+        super(Callback, self).__init__()
+
+        self.interval = interval
+        self.filepath = filepath
+        self.stopped_epoch = max_epoch
+        self.best = 0
+        self.X_val, self.y_val = validation_data
+        self.y_pred = np.zeros(self.y_val.shape)
+
+    def on_epoch_end(self, epoch, logs={}):
+        if epoch % self.interval == 0:
+            y_pred = self.model.predict(self.X_val, verbose=0)
+            """Important lines"""
+            current = roc_auc_score(self.y_val, y_pred)
+            logs['roc_auc_val'] = current
+
+            if current > self.best: #save model
+                self.best = current
+                self.y_pred = y_pred
+                self.stopped_epoch = epoch+1
+                self.model.save(self.filepath, overwrite = True)
+            print("--- AUC - epoch: {:d} - score: {:.5f}\n".format(epoch+1, current))
+
+    def cv_score(self):
+        self.cv_score = self.best
+        return self.cv_score
+
+ra_val = RocAucEvaluation(file_path, validation_data=(X_val, y_val), interval=1)
+kfold_cv_score += ra_val.cv_score.item()
+print("kfold_cv_score: {}".format(kfold_cv_score))
