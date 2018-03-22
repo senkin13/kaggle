@@ -9,6 +9,7 @@
 - translation
 
 # Feature Engineering
+word embedding
 
 
 # Pretrained Vectors
@@ -16,6 +17,8 @@
 - fasttext
 - glove
 
+# Train and Validation
+Kfold10
 
 # Model
 ## Traditional 
@@ -25,10 +28,10 @@ Wordbatch
 SVM
 
 ## Neural Network
-rdnn Kfold10
-capsule net Kfold10
-rnn Kfold10
-rcnn Kfold10
+rdnn 
+capsule net 
+rnn
+rcnn
 
 ## maxmin Blending
 
