@@ -57,7 +57,7 @@ zh-tw         3
 te            3
 ```
 # self training
-"""
+```
 Get 'text.txt'.
 https://nlp.stanford.edu/projects/glove/
 
@@ -81,4 +81,4 @@ NUM_THREADS=8
 X_MAX=10
 
 You can get "vectors.txt".
-"""
+```
