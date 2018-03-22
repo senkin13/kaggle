@@ -56,3 +56,29 @@ pa            4
 zh-tw         3
 te            3
 ```
+# self training
+"""
+Get 'text.txt'.
+https://nlp.stanford.edu/projects/glove/
+
+GloVe-1.2.zip
+demo.sh:
+
+CORPUS=text.txt
+VOCAB_FILE=vocab.txt
+COOCCURRENCE_FILE=cooccurrence.bin
+COOCCURRENCE_SHUF_FILE=cooccurrence.shuf.bin
+BUILDDIR=build
+SAVE_FILE=vectors
+VERBOSE=2
+MEMORY=4.0
+VOCAB_MIN_COUNT=2
+VECTOR_SIZE=300
+MAX_ITER=60
+WINDOW_SIZE=15
+BINARY=2
+NUM_THREADS=8
+X_MAX=10
+
+You can get "vectors.txt".
+"""
