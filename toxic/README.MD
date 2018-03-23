@@ -30,7 +30,7 @@
 - SVM
 
 ## Neural Network
-- rdnn +
+- rdnn 
 - capsule net 
 - rnn1(1 layer GRU)
 - rnn(2 layer GRU) - https://github.com/PavelOstyakov/toxic/blob/master/toxic/model.py
