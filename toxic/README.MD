@@ -39,11 +39,19 @@ self-trained word embedding
 ## Blending
 ### 1st layer traditional models
 - none = (Logistic Regression + Lightgbm + Wordbatch +SVM) /4
+
 ### 2rd layer
-- (rdnn[col].values)*40 +
-              (rnn1[col].values)*25 +
-              (cap[col].values)*25 +
-              (rnn2[col].values)*20 +
-              (none[col].values)*20 +
-              (w2v[col].values)*20 
+- ((rdnn[col].values)*40 +
+  (rnn1[col].values)*25 +
+  (cap[col].values)*25 +
+  (rnn2[col].values)*20 +
+  (none[col].values)*20 +
+  (w2v[col].values)*20 
              ) / 150
+- (minmax_scale(rdnn[col].values)*40 +
+   minmax_scale(rnn1[col].values)*25 +
+   minmax_scale(cap[col].values)*25 +
+   minmax_scale(rnn2[col].values)*20 +
+   minmax_scale(none[col].values)*20 +
+   minmax_scale(w2v[col].values)*20 
+              ) / 150
