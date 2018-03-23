@@ -19,28 +19,28 @@ self-trained word embedding
 - glove
 
 # Train and Validation
-Kfold10
-StratifiedKFold
+- Kfold10
+- StratifiedKFold
 
 # Model
 ## Traditional 
-Logistic Regression
-Lightgbm
-Wordbatch
-SVM
+- Logistic Regression
+- Lightgbm
+- Wordbatch
+- SVM
 
 ## Neural Network
-rdnn 
-capsule net 
-rnn1(1 layer GRU)
-rnn(2 layer GRU) - https://github.com/PavelOstyakov/toxic/blob/master/toxic/model.py
-rcnn
+- rdnn +
+- capsule net 
+- rnn1(1 layer GRU)
+- rnn(2 layer GRU) - https://github.com/PavelOstyakov/toxic/blob/master/toxic/model.py
+- rcnn
 
 ## Blending
 ### 1st layer traditional models
-none = (Logistic Regression + Lightgbm + Wordbatch +SVM) /4
+- none = (Logistic Regression + Lightgbm + Wordbatch +SVM) /4
 ### 2rd layer
-(rdnn[col].values)*40 +
+- (rdnn[col].values)*40 +
               (rnn1[col].values)*25 +
               (cap[col].values)*25 +
               (rnn2[col].values)*20 +
