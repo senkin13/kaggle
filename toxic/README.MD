@@ -9,9 +9,9 @@
 - translation
 
 # Feature Engineering
-pretrained word embedding
-concatenation of pretrained word embedding
-self-trained word embedding
+- pretrained word embedding
+- concatenation of pretrained word embedding
+- self-trained word embedding
 
 # Pretrained Vectors
 - word2vec
