@@ -41,6 +41,7 @@
 - none = (Logistic Regression + Lightgbm + Wordbatch +SVM) /4
 
 ### 2rd layer
+```
 - ((rdnn[col].values)*40 +
   (rnn1[col].values)*25 +
   (cap[col].values)*25 +
@@ -55,3 +56,4 @@
    minmax_scale(none[col].values)*20 +
    minmax_scale(w2v[col].values)*20 
               ) / 150
+```
