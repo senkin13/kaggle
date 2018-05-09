@@ -1,5 +1,5 @@
 # MODEL
-
+```
 ##[Model1 Fulldata]
 AvgViewPerDistinct: 1064434898.20
 app: 288114538.85
@@ -61,11 +61,12 @@ channel_day_hour_val: 1063818.91
 device_day_hour_val: 1008783.71
 pre_ip_app_device_os_channel_cumcount: 925293.26
 device_day_val: 524397.96
-
+```
 
 
        
-##[Model2 no first day]       
+##[Model2 no first day] 
+```
 app_channel_day_confRate: 307386690.01
 app_os_day_confRate: 45150592.18
 app_day_confRate: 18663941.82
@@ -145,3 +146,4 @@ device_day_confRate: 67359.84
 channel_day_count: 58204.31
 channel_day_app_unique: 23715.17
 ip_device_os_channel_day_app_unique: 21900.99
+```
