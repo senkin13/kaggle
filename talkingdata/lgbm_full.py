@@ -71,6 +71,27 @@ print("\n".join(("%s: %.2f" % x) for x in sorted(
         key=lambda x: x[1], reverse=True
 )))
 
+import datetime
+X_test = tes.drop(['ip','is_attributed','click_time','day'], axis=1)
+test_sup = tes[['ip', 'app', 'device', 'os', 'channel', 'click_time']]
+del tes
+gc.collect()
+
+test_pred = bst.predict(X_test, num_iteration=bst.best_iteration)
+test_sup['is_attributed'] = test_pred
+test_sup['click_time'] = pd.to_datetime(test_sup['click_time'])
+test_sup['click_time'] = test_sup['click_time'] + datetime.timedelta(hours=-8)
+
+join_cols = ['ip', 'app', 'device', 'os', 'channel', 'click_time']
+all_cols = join_cols + ['is_attributed']
+
+test = pd.read_csv('../input/test.csv')
+test['click_time'] = pd.to_datetime(test['click_time'])
+test = test.merge(test_sup[all_cols], how='left', on=join_cols)
+test = test.drop_duplicates(subset=['click_id'])
+
+test[['click_id', 'is_attributed']].to_csv('../models/lgbm.csv', index=False, float_format='%.9f')
+
 
 ## kfold
 X_train = X_train.as_matrix()
