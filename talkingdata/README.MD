@@ -1,6 +1,6 @@
 # MODEL
 
-##[Model1 Fulldata]
+## Model1 Fulldata Features
 ```
 AvgViewPerDistinct: 1064434898.20
 app: 288114538.85
@@ -66,7 +66,7 @@ device_day_val: 524397.96
 
 
        
-##[Model2 withour first day] 
+## Model2 Time lagged Features without first day
 ```
 app_channel_day_confRate: 307386690.01
 app_os_day_confRate: 45150592.18
