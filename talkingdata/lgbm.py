@@ -8,7 +8,12 @@ import pickle
 %%time
 X = pickle.load(open('/data/X.pkl','rb'))
 
+##model1 full data
 tra = X[X['is_attributed'].notnull()]
+##model2 >8th data
+tra = X[X['is_attributed'].notnull()][(X.click_time>='2017-11-08 00:00:00')]
+
+
 gc.collect()
 tes = X[(X.click_time >= '2017-11-10 12:00:00') & (X.click_time<='2017-11-10 23:00:00')]
 del X
