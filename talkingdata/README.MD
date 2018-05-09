@@ -191,7 +191,7 @@ params = {
 ```
 
 
-## Model1 Fulldata Features
+## Model1 Features Importance
 ```
 AvgViewPerDistinct: 1064434898.20
 app: 288114538.85
@@ -257,7 +257,7 @@ device_day_val: 524397.96
 
 
        
-## Model2 Time lagged Features without first day
+## Model2 Features Importance
 ```
 app_channel_day_confRate: 307386690.01
 app_os_day_confRate: 45150592.18
