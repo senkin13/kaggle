@@ -1,17 +1,25 @@
 # Prepocessing
+```
+1. transform click_time from utc to china time zone.
+2. remove data of 6th and 11th (6th:500, 7th 8th 9th 10th : 60000000, 11th:500)
+3. sort all the data by click_time
+```
 
 # Postprocessing
+```
+modify duplicated data's result to 0 except last row(public learboard + 0.0001, private learboard - 0.0001)
+```
 
 # Feature Engineering
 ```
-[category] 5
+[category] 
 app
 device
 os
 channel
 hour
 
-[full data count] 22
+[full data count] 
 ip_count
 app_count
 ip_app_count
@@ -35,7 +43,7 @@ ip_device_os_app_hour_count
 ip_device_os_app_day_count
 ip_device_os_day_hour_count
 
-[interval] 10
+[next/pre click time] 
 ip_device_os_app_interval
 ip_device_app_interval
 ip_os_interval
@@ -47,7 +55,7 @@ ip_device_os_app_pre_interval
 ip_os_device_interval
 ip_device_os_app_channel_pre_interval
 
-[full data unique] 12
+[full data unique] 
 ip_os_unique
 ip_hour_unique
 ip_app_channel_unique
@@ -61,7 +69,7 @@ ip_day_hour_unique
 ip_app_os_unique
 ip_device_os_app_unique
 
-[full data var] 6
+[full data var] 
 ip_app_channel_day_val
 ip_app_os_hour_val
 ip_day_channel_hour_val
@@ -69,15 +77,15 @@ channel_day_hour_val
 device_day_hour_val
 device_day_val
 
-[full data mean] 1
+[full data mean] 
 ip_app_channel_hour_mean
 
-[AvgViewPerDistinct] 3
+[AvgViewPerDistinct] 
 app_AvgViewPerDistinct
 channel_AvgViewPerDistinct
 app_channel_AvgViewPerDistinct
 
-[cumcount] 6
+[cumcount] 
 fu_ip_app_device_os_channel_cumcount
 fu_ip_device_os_app_cumcount
 fu_ip_os_cumcount
@@ -85,7 +93,7 @@ pre_ip_app_device_os_channel_cumcount
 pre_ip_device_os_app_cumcount
 pre_ip_os_cumcount
 
-[time lagged conversion rate with smoothing] 11
+[time lagged conversion rate with smoothing]
 app_channel_day_confRate
 app_os_day_confRate
 app_day_confRate
@@ -148,6 +156,40 @@ ip_day_app_unique
 ```
 
 # MODEL
+```
+model1: use fulldata(train+test_supplemetn) features
+model2: use daily+timelagged(train 8th,9th without 7th ) features
+
+Final model1: kfold5 + kfold10 + 4 different seeds with 0.95 random split
+Final model2: kfold5 
+
+Ensembling: 0.6*model1 + 0.4*model2
+```
+
+## parameter
+```
+params = {
+    'boosting_type': 'gbdt',
+    'objective': 'binary',
+    'metric': 'auc',
+    'learning_rate': 0.2,
+    'num_leaves': 255,  
+    'max_depth': 8,  
+    'min_child_samples': 100,  
+    'max_bin': 512,  
+    'subsample': 0.8,  
+    'subsample_freq': 1,  
+    'colsample_bytree': 0.7,  
+    'min_child_weight': 0,  
+    'subsample_for_bin': 200000,  
+    'min_split_gain': 0,  
+    'reg_alpha': 0,  
+    'reg_lambda': 0,  
+    'verbose': 1,
+    'scale_pos_weight':99.7
+    }
+```
+
 
 ## Model1 Fulldata Features
 ```
