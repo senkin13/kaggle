@@ -1,6 +1,7 @@
 # MODEL
-```
+
 ##[Model1 Fulldata]
+```
 AvgViewPerDistinct: 1064434898.20
 app: 288114538.85
 channel: 230323927.88
@@ -65,7 +66,7 @@ device_day_val: 524397.96
 
 
        
-##[Model2 no first day] 
+##[Model2 withour first day] 
 ```
 app_channel_day_confRate: 307386690.01
 app_os_day_confRate: 45150592.18
