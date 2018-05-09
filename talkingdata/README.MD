@@ -1,5 +1,6 @@
 # Prepocessing
 ```
+Use hive spark for dealing bigdata
 1. transform click_time from utc to china time zone.
 2. remove data of 6th and 11th (6th:500, 7th 8th 9th 10th : 60000000, 11th:500)
 3. sort all the data by click_time
