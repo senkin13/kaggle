@@ -1,3 +1,152 @@
+# Prepocessing
+
+# Postprocessing
+
+# Feature Engineering
+```
+[category] 5
+app
+device
+os
+channel
+hour
+
+[full data count] 22
+ip_count
+app_count
+ip_app_count
+ip_device_count
+ip_os_count
+ip_hour_count
+ip_day_count
+device_app_count
+app_channel_count
+ip_device_os_count
+ip_device_hour_count
+ip_device_day_count
+ip_day_hour_count
+ip_device_app_count
+ip_device_os_app_count
+ip_device_os_hour_count
+ip_device_os_day_count
+ip_os_day_hour_count
+ip_app_day_hour_count
+ip_device_os_app_hour_count
+ip_device_os_app_day_count
+ip_device_os_day_hour_count
+
+[interval] 10
+ip_device_os_app_interval
+ip_device_app_interval
+ip_os_interval
+ip_app_interval
+ip_device_interval
+ip_channel_interval
+ip_device_os_app_channel_interval
+ip_device_os_app_pre_interval
+ip_os_device_interval
+ip_device_os_app_channel_pre_interval
+
+[full data unique] 12
+ip_os_unique
+ip_hour_unique
+ip_app_channel_unique
+ip_app_os_channel_unique
+ip_device_os_channel_app_unique
+app_channel_unique
+ip_app_unique
+ip_device_unique
+ip_channel_unique
+ip_day_hour_unique
+ip_app_os_unique
+ip_device_os_app_unique
+
+[full data var] 6
+ip_app_channel_day_val
+ip_app_os_hour_val
+ip_day_channel_hour_val
+channel_day_hour_val
+device_day_hour_val
+device_day_val
+
+[full data mean] 1
+ip_app_channel_hour_mean
+
+[AvgViewPerDistinct] 3
+app_AvgViewPerDistinct
+channel_AvgViewPerDistinct
+app_channel_AvgViewPerDistinct
+
+[cumcount] 6
+fu_ip_app_device_os_channel_cumcount
+fu_ip_device_os_app_cumcount
+fu_ip_os_cumcount
+pre_ip_app_device_os_channel_cumcount
+pre_ip_device_os_app_cumcount
+pre_ip_os_cumcount
+
+[time lagged conversion rate with smoothing] 11
+app_channel_day_confRate
+app_os_day_confRate
+app_day_confRate
+app_device_day_confRate
+channel_os_day_confRate
+ip_day_confRate
+channel_day_confRate
+os_device_day_confRate
+channel_device_day_confRate
+os_day_confRate
+device_day_confRate
+
+[time lagged lastday count]
+ip_device_os_lastday_count
+ip_device_lastday_count
+ip_os_lastday_count
+ip_hour_day_count
+ip_os_hour_lastday_count
+ip_lastday_count
+ip_device_os_app_lastday_count
+ip_device_app_lastday_count
+device_app_lastday_count
+ip_app_lastday_count
+app_lastday_count
+
+[daily count]
+ip_day_count
+os_device_day_count
+ip_device_os_day_count
+ip_os_hour_day_count
+ip_device_day_count
+ip_device_os_app_hour_day_count
+ip_app_day_count
+ip_device_hour_day_count
+os_app_channel_day_count
+app_hour_day_count
+ip_os_day_count
+app_channel_day_count
+ip_device_os_app_day_count
+app_day_count
+ip_device_os_app_channel_day_count
+ip_app_hour_day_count
+
+[daily unique count]
+channel_day_app_unique
+ip_app_os_day_channel_unique
+ip_app_day_os_unique
+ip_device_os_day_app_unique
+ip_day_device_unique
+ip_app_day_channel_unique
+ip_day_hour_unique
+ip_day_os_unique
+ip_day_channel_unique
+ip_day_app_unique
+
+
+
+
+
+```
+
 # MODEL
 
 ## Model1 Fulldata Features
