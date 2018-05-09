@@ -55,7 +55,7 @@ ip_device_os_app_pre_interval
 ip_os_device_interval
 ip_device_os_app_channel_pre_interval
 
-[full data unique] 
+[full data unique count] 
 ip_os_unique
 ip_hour_unique
 ip_app_channel_unique
