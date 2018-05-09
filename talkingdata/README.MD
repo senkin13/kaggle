@@ -148,19 +148,17 @@ ip_day_hour_unique
 ip_day_os_unique
 ip_day_channel_unique
 ip_day_app_unique
-
-
-
-
-
 ```
 
 # MODEL
 ```
-model1: use fulldata(train+test_supplemetn) features
-model2: use daily+timelagged(train 8th,9th without 7th ) features
+LGBM model1: use fulldata(train+test_supplement) features
+LGBM model2: use daily+time-lagged(train 8th,9th without 7th ) features
+```
 
-Final model1: kfold5 + kfold10 + 4 different seeds with 0.95 random split
+## Ensembling
+```
+Final model1: kfold5 + kfold10 + 4 different seeds with 0.95 random split 
 Final model2: kfold5 
 
 Ensembling: 0.6*model1 + 0.4*model2
