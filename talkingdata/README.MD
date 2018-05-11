@@ -173,7 +173,7 @@ params = {
     'boosting_type': 'gbdt',
     'objective': 'binary',
     'metric': 'auc',
-    'learning_rate': 0.2,
+    'learning_rate': 0.02,
     'num_leaves': 255,  
     'max_depth': 8,  
     'min_child_samples': 100,  
