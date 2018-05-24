@@ -38,27 +38,13 @@ textfeats = ['text']
 for cols in textfeats:   
 
     all[cols + '_num_pun1'] = all[cols].apply(lambda x: count_regexp_occ('.', x))
-    all[cols + '_num_pun2'] = all[cols].apply(lambda x: count_regexp_occ(',', x))
-    all[cols + '_num_pun3'] = all[cols].apply(lambda x: count_regexp_occ('-', x))
-    all[cols + '_num_pun4'] = all[cols].apply(lambda x: count_regexp_occ('!', x))
-    all[cols + '_num_pun5'] = all[cols].apply(lambda x: count_regexp_occ('/', x)) 
-    all[cols + '_num_pun6'] = all[cols].apply(lambda x: count_regexp_occ('Г', x))    
-    all[cols + '_num_pun7'] = all[cols].apply(lambda x: count_regexp_occ('\(', x))
-    all[cols + '_num_pun8'] = all[cols].apply(lambda x: count_regexp_occ('"', x)) 
-    all[cols + '_num_pun9'] = all[cols].apply(lambda x: count_regexp_occ('\'', x))  
+
     
 textfeats = ['title']
 for cols in textfeats:   
 
     all[cols + '_num_pun1'] = all[cols].apply(lambda x: count_regexp_occ('.', x))
-    all[cols + '_num_pun2'] = all[cols].apply(lambda x: count_regexp_occ(',', x))
-    all[cols + '_num_pun3'] = all[cols].apply(lambda x: count_regexp_occ('-', x))
-    all[cols + '_num_pun4'] = all[cols].apply(lambda x: count_regexp_occ('!', x))
-    all[cols + '_num_pun5'] = all[cols].apply(lambda x: count_regexp_occ('/', x)) 
-    all[cols + '_num_pun6'] = all[cols].apply(lambda x: count_regexp_occ('Г', x))    
-    all[cols + '_num_pun7'] = all[cols].apply(lambda x: count_regexp_occ('\(', x))
-    all[cols + '_num_pun8'] = all[cols].apply(lambda x: count_regexp_occ('"', x)) 
-    all[cols + '_num_pun9'] = all[cols].apply(lambda x: count_regexp_occ('\'', x)) 
+
     
 df_all_tmp = all.drop(['description','title','text'],axis=1)
 tmp_columns = df_all_tmp.columns.values
@@ -67,3 +53,39 @@ for i in tmp_columns:
     print (i)
     df_all_tmp[i].to_pickle('../features/text_agg/' + str(i))
     
+%%time
+
+df_all_tmp = df_all.copy()
+raw_columns = df_all_tmp.columns.values
+
+gc.collect()
+## aggregate features
+def agg(df,agg_cols):
+    for c in tqdm(agg_cols):
+        new_feature = '{}_{}_{}'.format('_'.join(c['groupby']), c['agg'], c['target'])
+        gp = df.groupby(c['groupby'])[c['target']].agg(c['agg']).reset_index().rename(index=str, columns={c['target']:new_feature})
+        df = df.merge(gp,on=c['groupby'],how='left')
+    return df
+
+agg_cols = [
+
+############################unique aggregation##################################
+    #{'groupby': ['user_id'], 'target':'image_top_1', 'agg':'nunique'},
+
+    
+############################count aggregation##################################  
+
+    
+############################mean/median/sum/min/max aggregation##################################       
+
+
+    
+]
+
+df_all_tmp = agg(df_all_tmp,agg_cols)
+tmp_columns = df_all_tmp.columns.values
+
+for i in tmp_columns:
+    if i not in raw_columns:
+        print (i)
+        df_all_tmp[i].to_pickle('../features/number_agg/' + str(i))
