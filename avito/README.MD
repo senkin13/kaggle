@@ -1,4 +1,4 @@
-# 9th Rank Of Avito Demand Prediction Challenge
+# 9th Rank Of Kaggle Avito Demand Prediction Challenge
 
 # Prepocessing
 ```
