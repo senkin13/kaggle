@@ -19,7 +19,7 @@ df_all['text'] = df_all['description'].fillna('').astype(str) + ' ' + df_all['ti
 [word2vec]
 [fasttext]
 [image meta]
-[vgg16,resnet output]
+[vgg16,resnet,xception output]
 ```
 
 # MODEL
