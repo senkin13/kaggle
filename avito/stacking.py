@@ -23,13 +23,13 @@ LOGFORMAT = '%(asctime)s %(levelname)s %(message)s'
 logger = getLogger('avito')
 
 OOF_FILE_LIST = [
-    'data/working/models/ynktk/dpcnn_seed_777_emb_en_splits_5_score_0.21860_0.00037.npy',
-    'data/working/models/ynktk/dpcnn_seed_777_emb_ft_splits_5_score_0.21781_0.00054.npy',
-    'data/working/models/ynktk/dpcnn_seed_777_emb_w2v_splits_5_score_0.21721_0.00060.npy',
-    'data/working/models/ynktk/grucnn_seed_777_emb_en_splits_5_score_0.21876_0.00047.npy',
-    'data/working/models/ynktk/grucnn_seed_777_emb_ft_splits_5_score_0.21696_0.00032.npy',
-    'data/working/models/ynktk/grucnn_seed_777_emb_w2v_splits_5_score_0.21672_0.00040.npy',
-    'data/working/models/ynktk/lightgbm_gbdt_seed_777_emb_ft_splits_5_score_0.21545_0.00037.npy',
+    'data/working/models/dpcnn_seed_777_emb_en_splits_5_score_0.21860_0.00037.npy',
+    'data/working/models/dpcnn_seed_777_emb_ft_splits_5_score_0.21781_0.00054.npy',
+    'data/working/models/dpcnn_seed_777_emb_w2v_splits_5_score_0.21721_0.00060.npy',
+    'data/working/models/grucnn_seed_777_emb_en_splits_5_score_0.21876_0.00047.npy',
+    'data/working/models/grucnn_seed_777_emb_ft_splits_5_score_0.21696_0.00032.npy',
+    'data/working/models/grucnn_seed_777_emb_w2v_splits_5_score_0.21672_0.00040.npy',
+    'data/working/models/lightgbm_gbdt_seed_777_emb_ft_splits_5_score_0.21545_0.00037.npy',
 
     'data/working/models/v87_lgbm_oof_pred.npy',
     'data/working/models/v91_cat_oof_pred.npy',
