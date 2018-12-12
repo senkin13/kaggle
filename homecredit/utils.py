@@ -171,7 +171,6 @@ def rank(data, feat1, feat2, ascending=True):
 
 
 def get_feat_size(train,size_feat):
-    """计算A组的数量大小（忽略NaN等价于count）"""
     result_path = cache_path +  ('_').join(size_feat)+'_count'+'.csv'
     if os.path.exists(result_path) & load:
         result = pd.read_hdf(result_path)
@@ -184,7 +183,6 @@ def get_feat_size(train,size_feat):
 
 
 def get_feat_size_feat(train,base_feat,other_feat):
-    """计算唯一计数（等价于unique count）"""
     result_path = cache_path + ('_').join(base_feat)+'_count_'+('_').join(other_feat)+'.hdf'
     if os.path.exists(result_path) & load:
         result = pd.read_hdf(result_path)
@@ -214,7 +212,6 @@ def get_feat_stat_feat(train,base_feat,other_feat,stat_list=['min','max','var','
     return result
     
 def get_last_feat3(train_base,data,dup_feat,base_feat,time_col,ascending=False,prefix=''):
-    """计算A组的数量大小（忽略NaN等价于count）"""
     result_path = cache_path + prefix+ 'last_feat'
     if os.path.exists(result_path) & load:
         result = pd.read_hdf(result_path)
