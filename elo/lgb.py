@@ -178,6 +178,59 @@ traintest = pd.concat([train,test],axis=0)[['card_id','target']]
 def mod(arr):
     return mode(arr)[0][0]  
 
+def count_vector_feature(df, traintest, groupby, target):
+    count_vec = CountVectorizer()
+    df_bag = pd.DataFrame(df[[groupby, target]])
+    df_bag = df_bag.groupby(groupby, as_index=False)[target].agg({'list':(lambda x: list(x))}).reset_index()
+    df_bag[target + '_list']=df_bag['list'].apply(lambda x: str(x).replace('[','').replace(']','').replace(',',' '))
+    
+    df_bag = df_bag.merge(traintest,on=groupby,how='left')
+    df_bag_train = df_bag[df_bag['target'].notnull()].reset_index(drop=True)
+    df_bag_test = df_bag[df_bag['target'].isnull()].reset_index(drop=True)
+    
+    count_full_vector = count_vec.fit_transform(df_bag[target + '_list'])
+    count_train_vector = count_vec.transform(df_bag_train[target + '_list'])
+    count_test_vector = count_vec.transform(df_bag_test[target + '_list'])
+    print ('count_full_vector:' + str(count_full_vector.shape))
+    print ('count_train_vector:' + str(count_train_vector.shape))
+    print ('count_test_vector:' + str(count_test_vector.shape))
+    return count_train_vector,count_test_vector
+    
+def tfidf_vector_feature(df, traintest, groupby, target):
+    tfidf_vec = TfidfVectorizer(ngram_range=(1,1), max_features=10000)
+    df_bag = pd.DataFrame(df[[groupby, target]])
+    df_bag = df_bag.groupby(groupby, as_index=False)[target].agg({'list':(lambda x: list(x))}).reset_index()
+    df_bag[target + '_list']=df_bag['list'].apply(lambda x: str(x).replace('[','').replace(']','').replace(',',' '))
+    
+    df_bag = df_bag.merge(traintest,on=groupby,how='left')
+    df_bag_train = df_bag[df_bag['target'].notnull()].reset_index(drop=True)
+    df_bag_test = df_bag[df_bag['target'].isnull()].reset_index(drop=True)
+    
+    tfidf_full_vector = tfidf_vec.fit_transform(df_bag[target + '_list'])
+    tfidf_train_vector = tfidf_vec.transform(df_bag_train[target + '_list'])
+    tfidf_test_vector = tfidf_vec.transform(df_bag_test[target + '_list'])
+    print ('tfidf_full_vector:' + str(tfidf_full_vector.shape))
+    print ('tfidf_train_vector:' + str(tfidf_train_vector.shape))
+    print ('tfidf_test_vector:' + str(tfidf_test_vector.shape))
+    return tfidf_full_vector,tfidf_train_vector,tfidf_test_vector
+  
+def lda_feature(prefix,df, groupby, target,n_topic):
+    df_bag = pd.DataFrame(df[[groupby, target]])
+    df_bag[target] = df_bag[target].astype(str)
+    df_bag[target].fillna('NAN', inplace=True)    
+    df_bag = df_bag.groupby(groupby, as_index=False)[target].agg({'list':(lambda x: list(x))})
+    df_bag['sentence'] = df_bag['list'].apply(lambda x: list(map(str,x)))
+    docs = df_bag['sentence'].tolist() 
+    dictionary = corpora.Dictionary(docs)
+    corpus = [dictionary.doc2bow(text) for text in docs]
+    lda = LdaMulticore(corpus, id2word=dictionary, num_topics=n_topic)
+    docres = [dict(lda[doc_bow]) for doc_bow in corpus]
+    df_lda = pd.DataFrame(docres,dtype=np.float16).fillna(0.001)
+    df_lda.columns = ['lda_%s_%s_%d'%(prefix,target,x) for x in range(n_topic)]
+    df_lda[groupby] = df_bag[groupby]
+    print ('df_lda:' + str(df_lda.shape))
+    return df_lda
+  
 def word2vec_feature(prefix, df, groupby, target,size):
     df_bag = pd.DataFrame(df[[groupby, target]])
     df_bag[target] = df_bag[target].astype(str)
