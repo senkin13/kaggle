@@ -175,6 +175,16 @@ train = pd.read_csv('../input/train.csv')
 test = pd.read_csv('../input/test.csv')
 traintest = pd.concat([train,test],axis=0)[['card_id','target']]
 
+def encode(df, col):
+    df[col + '_cos'] = np.cos(2 * np.pi * df[col] / df[col].max())
+    df[col + '_sin'] = np.sin(2 * np.pi * df[col] / df[col].max())
+    return df
+
+for col in ['month','day','hour']:
+    df_hist = encode(df_hist, col)
+    df_new = encode(df_new, col)
+    df_hist_new = encode(df_hist_new, col)
+    
 def mod(arr):
     return mode(arr)[0][0]  
 
