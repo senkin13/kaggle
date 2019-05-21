@@ -1,12 +1,12 @@
-def target_mean(df_train,train_df,test_df,cols):
+def target_mean(df_train,train_df,valid_df,test_df,cols):
     min_samples_leaf=100
     smoothing=10
     noise_level=0.01 #0.01
     for c in tqdm(cols):
         new_feature = '{}_{}'.format('_'.join(c['groupby']), c['func'])
-        averages = df_train.groupby(c['groupby'])[['bin']].agg(['mean','count']).bin.reset_index()
+        averages = df_train.groupby(c['groupby'])[['target']].agg(['mean','count']).target.reset_index()
         smoothing = 1 / (1 + np.exp(-(averages['count'] - min_samples_leaf) / smoothing))
-        averages[new_feature] = df_train['bin'].mean() * (1 - smoothing) + averages['mean'] * smoothing
+        averages[new_feature] = df_train['target'].mean() * (1 - smoothing) + averages['mean'] * smoothing
         averages.drop(['mean', 'count'], axis=1, inplace=True)
 
         np.random.seed(42)
@@ -14,9 +14,10 @@ def target_mean(df_train,train_df,test_df,cols):
         averages[new_feature] = averages[new_feature] + noise
 
         train_df = train_df.merge(averages,on=c['groupby'],how='left')
+        valid_df = valid_df.merge(averages,on=c['groupby'],how='left')
         test_df = test_df.merge(averages,on=c['groupby'],how='left')
         
-    return train_df,test_df    
+    return train_df,valid_df,test_df  
 
 def woe(df_train,train_df,test_df,cols):
     s = 0.1**8
