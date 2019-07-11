@@ -48,6 +48,27 @@ plt.ylabel('target', fontsize=12)
 plt.xlabel('feature_1', fontsize=12)
 plt.show()
 
+
+cnt_srs = train_tr['first_active_month'].dt.date.value_counts()
+cnt_srs = cnt_srs.sort_index()
+plt.figure(figsize=(14,6))
+sns.barplot(cnt_srs.index, cnt_srs.values, alpha=0.8, color='green')
+plt.xticks(rotation='vertical')
+plt.xlabel('First active month', fontsize=12)
+plt.ylabel('Number of cards', fontsize=12)
+plt.title("First active month count in train set")
+plt.show()
+
+cnt_srs = valid_tr['first_active_month'].dt.date.value_counts()
+cnt_srs = cnt_srs.sort_index()
+plt.figure(figsize=(14,6))
+sns.barplot(cnt_srs.index, cnt_srs.values, alpha=0.8, color='green')
+plt.xticks(rotation='vertical')
+plt.xlabel('First active month', fontsize=12)
+plt.ylabel('Number of cards', fontsize=12)
+plt.title("First active month count in test set")
+plt.show()
+
 ##### venn2
 plt.figure(figsize=(20,16))
 venn2([set(train.card_id.unique()), set(test.card_id.unique())], set_labels = ('Train set', 'Test set') )
