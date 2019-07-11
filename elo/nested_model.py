@@ -220,3 +220,127 @@ print('Full OOF RMSE %.6f' % cv)
 
 # test_df['target'] = sub_preds
 # test_df[['card_id','target']].to_csv('../ensemble/lgb_pred_' + str(cv) + '.csv',index=False)
+
+
+
+%%time
+import pandas as pd
+import numpy as np
+import gc
+import pickle
+import time
+import datetime
+import warnings 
+warnings.filterwarnings('ignore')
+import lightgbm as lgb
+from sklearn.model_selection import KFold,StratifiedKFold,GroupKFold,RepeatedKFold
+from sklearn.metrics import mean_squared_error
+from scipy import sparse
+from scipy.sparse import hstack, vstack, csr_matrix
+from sklearn.feature_selection import chi2, SelectPercentile
+from sklearn.feature_selection import SelectFromModel, VarianceThreshold,RFE
+
+def rmse(y_true, y_pred):
+    return (mean_squared_error(y_true, y_pred))** .5
+
+drop_features=['card_id', 'target', 'purchase_date','first_active_month','is_month_start','quarter'#'purchase_amount_per_ins',
+               'outliers','active_months_lag3','yearmonth','category_123','dummy',
+              ]
+
+
+train_main = df[df['target'].notnull()]
+#del df
+gc.collect()
+# outlier tag
+train_main['outliers'] = 0
+train_main.loc[train_main['target'] < -30, 'outliers'] = 1
+
+train_df = df_new_train[df_new_train['target'].notnull()]
+test_df = df_new_train[df_new_train['target'].isnull()]
+#del df_hist_new_train
+gc.collect()
+
+feats = [f for f in train_df.columns if f not in drop_features 
+        ]
+
+cat_features = [c for c in feats if 'feature_' in c]
+n_splits= 5
+ #[111111,2020,223,2233,28888,817]
+SEED = 2233
+folds = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=SEED)
+# oof_preds = np.zeros(train_df.shape[0])
+sub_preds = np.zeros(test_df.shape[0])
+
+print ('feats:' + str(len(feats)))
+
+for n_fold, (train_idx, valid_idx) in enumerate(folds.split(train_main['card_id'], train_main['outliers'])):
+  
+    train_full = train_main['card_id'].iloc[train_idx].to_frame()
+    valid_full = train_main['card_id'].iloc[valid_idx].to_frame()
+    
+    train_hist_new = train_df.merge(train_full,on='card_id',how='right')
+    valid_hist_new = train_df.merge(valid_full,on='card_id',how='right')
+    
+    train_x,train_y = train_hist_new[feats],train_hist_new['target']
+    valid_x,valid_y = valid_hist_new[feats],valid_hist_new['target']
+    
+    print("Train Index:",train_idx,",Val Index:",valid_idx)
+
+#     params = {
+#                "objective" : "regression", 
+#                "boosting" : "gbdt", 
+#                "metric" : "rmse",  
+#                "max_depth": 8, #8
+#                "min_data_in_leaf": 70, #70
+#                "min_gain_to_split": 0.1, 
+#                "reg_alpha": 0.1,
+#                "reg_lambda": 20, #20
+#                "num_leaves" : 120, #120
+#                "max_bin" : 255, #255
+#                "learning_rate" : 0.01, #0.01
+#                "subsample" : 1,
+#                "bagging_seed" : 4590,
+#                "colsample_bytree" : 0.2, #0.15
+#                "verbosity": -1,
+#                "random_state": 4590,
+#     }
+    params = {
+               "objective" : "regression", 
+               "boosting" : "gbdt", #
+               "metric" : "rmse",  
+               "max_depth": 9, #9
+               "min_data_in_leaf": 70, #70
+               "min_gain_to_split": 0.05,#0.05 
+               "reg_alpha": 0.1, #0.1,
+               "reg_lambda": 20, #20
+               "num_leaves" : 120, #120
+               "max_bin" : 350, #350
+               "learning_rate" : 0.005, #0.005
+               "bagging_fraction" : 1,
+               "bagging_freq" : 1,
+               "feature_fraction" : 0.2, #0.2
+               "verbosity": -1,
+    }    
+
+    if n_fold >= 0:
+        evals_result = {}
+        dtrain = lgb.Dataset(
+            train_x, label=train_y,categorical_feature=cat_features)#categorical_feature=cat_features
+        dval = lgb.Dataset(
+            valid_x, label=valid_y, reference=dtrain,categorical_feature=cat_features)
+        bst = lgb.train(
+            params, dtrain, num_boost_round=10000,
+            valid_sets=[dval], early_stopping_rounds=200, verbose_eval=100,)#feval = evalerror
+        
+        new_list = sorted(zip(feats, bst.feature_importance('gain')),key=lambda x: x[1], reverse=True)[:]
+        for item in new_list:
+            print (item) 
+
+        oof_preds = pd.DataFrame()
+        oof_preds['card_id'] = valid_hist_new['card_id']
+        oof_preds['submodel'] = bst.predict(valid_x, num_iteration=bst.best_iteration)
+        oof_preds.to_pickle('../feature/reborn_new_oof_2233_submodel_' + str(n_fold) + '.pkl')
+        sub_preds += bst.predict(test_df[feats], num_iteration=bst.best_iteration) / folds.n_splits # test_df_new
+
+test_df['submodel'] = sub_preds
+test_df[['card_id','submodel']].to_pickle('../feature/reborn_new_pred_2233_submodel.pkl')
