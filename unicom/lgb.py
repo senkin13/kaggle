@@ -18,7 +18,24 @@ train = train2
 test2 = pd.read_csv('../input/test_2.csv') #new
 test = test2
 
-%%time
+# check dup count
+# train_fe = train.drop(['user_id'],axis=1)
+# train_dup = train_fe[train_fe.duplicated(keep=False)]
+# train_dup.shape
+# (52931, 26)
+
+# extract nodup data
+all_cols = [f for f in train.columns if f not in ['user_id']]
+train_nodup = train.drop_duplicates(subset=all_cols,keep=False)
+
+# create duplicated data from ['contract_type']==0 to train
+train_0 = train_nodup[train_nodup['contract_type']==0]
+print ('train_0 shape:' + str(train_0.shape))
+train_0_sample = train_0.sample(n=15000)
+print ('train_0_sample shape:' + str(train_0_sample.shape))
+
+train = pd.concat([train,train_0_sample],axis=0)
+print ('new train shape:' + str(train.shape))
 
 # 对标签编码 映射关系
 label2current_service = dict(zip(range(0,len(set(before['current_service']))),sorted(list(set(before['current_service'])))))
@@ -621,3 +638,101 @@ print('Full F1-Score %.6f' % np.square(f1_score(train_df['current_service'],  oo
 
 # preds4 = pd.DataFrame({"user_id":test["user_id"], "predict":preds})
 # preds4['predict'] = preds4['predict'].map(label2current_service)
+
+
+############ postprocessing ############
+import pandas as pd
+import lightgbm as lgb
+import re
+import time
+import numpy as np
+import math
+import gc
+import pickle
+import os
+from sklearn.metrics import roc_auc_score, log_loss, f1_score
+from collections import Counter
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from scipy import sparse
+# from com_util import *
+import lightgbm
+from sklearn.model_selection import KFold, StratifiedKFold
+import copy
+import random
+from sklearn.metrics import log_loss
+
+#sk = pd.read_csv("../metafeatures/senkin.csv")
+
+#train = pd.read_csv("train.csv")
+#train = train.merge(sk, on="user_id", how="left")
+for i in range(11):
+    train_new["pred%s" % i] = train_new["pred%s" % i] * 0.5  # +train_new["pred%s"%i]*0.5
+
+label = pd.read_csv("../input/train_2.csv")
+label = label[label.current_service != 999999].copy()
+
+lb = LabelEncoder()
+target = lb.fit_transform(label["current_service"])
+
+print(lb.classes_)
+
+dic = dict(zip(["pred%s" % i for i in range(11)], [1] * 11))
+count = train_new["current_service"].value_counts() / float(train_new.shape[0])
+count = dict(zip(["pred%s" % i for i in count.index], list(count.values)))
+
+col = ["pred%s" % i for i in range(11)]
+b1 = train_new[col].copy()
+
+times = 10
+result_score = 0
+dic_result = {}
+for tt in range(times):
+    for i in col:
+        k = dic[i]
+        b1[i] = train_new[i] * k
+    preds = np.argmax(b1.values, axis=1)
+    test_pred = pd.DataFrame(preds)
+    test_pred.columns = ["class"]
+    test_pred["class"] = test_pred["class"].astype(int)
+    ss = test_pred["class"].value_counts() / float(test_pred.shape[0])
+    dict_count = dict(zip(["pred%s" % i for i in ss.index], list(ss.values)))
+    dic_ori = copy.deepcopy(dic)
+    # for i in col:
+    # dic[i]=((count[int(i)+1]/dict_count[int(i)+1])-dic_ori[i])/2+dic_ori[i]
+
+    #print('Full Logloss-Score %.6f' % log_loss(target,  b1.values ))
+    print('Full F1-Score %.6f' % f1_score(target, preds, labels=range(0, 11), average='macro') ** 2) 
+    score = log_loss(target,  b1.values )
+    #score = f1_score(target, preds, labels=range(0, 11), average='macro') ** 2
+    # print(dic)
+    print(score)
+    if score > result_score:
+        dic_result = copy.deepcopy(dic)
+        result_score = score
+
+    for i in col:
+        dic[i] = ((count[i] / dict_count[i]) - 1) / 2 + dic_ori[i]
+        # dic[i]=((count[i]/dict_count[i])-dic_ori[i])/2+dic_ori[i]
+
+print(dic_result)
+
+# test = pd.read_csv("test.csv")
+# test = test.merge(sk, on="user_id", how="left")
+for i in range(11):
+    test_new["pred%s" % i] = test_new["pred%s" % i] * 0.5  # +test_new["pred%s"%i]*0.5
+
+for i in col:
+    test_new[i] = test_new[i] * dic_result[i]
+
+pred_class = np.argmax(test_new[col].values, axis=1)
+test_new["predict"] = lb.inverse_transform(pred_class)
+test_new[["user_id", "predict"]].to_csv("baseline_%s.csv" % str(result_score), index=None)
+print(test_new.predict.value_counts() / float(test_new.shape[0]))
+
+print(label.current_service.value_counts() / float(label.shape[0]))
+
+#print(sk.shape)
+print(train_new.shape)
+print(test_new.shape)
+print(str(result_score))
