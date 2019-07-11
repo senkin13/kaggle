@@ -32,6 +32,22 @@ plt.xlabel('time to failure', fontsize=12)
 plt.ylabel('predicted', fontsize=12)
 plt.plot([(0, 0), (20, 20)], [(0, 0), (20, 20)])
 
+##### displot
+plt.figure(figsize=(20,8))
+plt.subplot(1,2,1)
+ax = sns.distplot(train["target"].values, bins=200, kde=False)
+ax.set_xlabel('target', fontsize=15)
+ax.set_ylabel('target', fontsize=15)
+ax.set_title("target Histogram", fontsize=20)
+
+##### barplot
+cnt_srs=train.groupby("feature_1").target.mean()
+plt.figure(figsize=(12,6))
+sns.barplot(cnt_srs.index, cnt_srs.values, alpha=0.8)
+plt.ylabel('target', fontsize=12)
+plt.xlabel('feature_1', fontsize=12)
+plt.show()
+
 ##### venn2
 plt.figure(figsize=(20,16))
 venn2([set(train.card_id.unique()), set(test.card_id.unique())], set_labels = ('Train set', 'Test set') )
