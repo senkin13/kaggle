@@ -1,5 +1,6 @@
 from sklearn.metrics import confusion_matrix
 import itertools
+from matplotlib_venn import venn2
 import matplotlib.pyplot as plt
 import seaborn as sns
 color = sns.color_palette()
@@ -31,6 +32,11 @@ plt.xlabel('time to failure', fontsize=12)
 plt.ylabel('predicted', fontsize=12)
 plt.plot([(0, 0), (20, 20)], [(0, 0), (20, 20)])
 
+##### venn2
+plt.figure(figsize=(20,16))
+venn2([set(train.card_id.unique()), set(test.card_id.unique())], set_labels = ('Train set', 'Test set') )
+plt.title("Number of card_id in train and test", fontsize=15)
+plt.show()
 
 ##### confusion_matrix
 
