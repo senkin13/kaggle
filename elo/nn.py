@@ -98,3 +98,48 @@ y = df['target'].values
 model = nn(num_cols, cat_cols)
 history = model.fit([df_numerical]+[df_embedding]+[df_ts], df['target'], batch_size=256, epochs=20, verbose=1,validation_split=.05,)   
 
+def rnn_model(time_step, n_features):
+    model = Sequential()
+    
+    model.add(CuDNNGRU(256, input_shape=(time_step, n_features))) #unit: #of neurons in each LSTM cell? input_shape=(time_step, n_features)
+    model.add(Dropout(0.2))    
+    model.add(BatchNormalization())
+    model.add(Dense(64, activation='relu'))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.2))    
+    model.add(Dense(1,activation='relu'))
+    model.compile(loss='mean_squared_error', optimizer='adam')
+    return model
+  
+def get_model(cat_cols, num_cols):
+    # embedding
+    embedding_inp = [Input(shape=(1,),dtype='int32') for x in range(len(cat_cols))]
+    ex = [Embedding(output_dim=5, input_dim=1, embeddings_initializer='RandomUniform',
+                   input_length=1)(x) for x in embedding_inp]
+    ex = Concatenate(axis=1)(ex)
+#     ex = Dense(32)(ex)
+#     ex = BatchNormalization()(ex) 
+#     ex = Dropout(0.2)(ex)
+   
+    # numerical
+    numerical_inp = Input(shape=(len(num_cols),), dtype='float32')
+    #x = BatchNormalization()(numerical_inp)
+    x = Dense(512)(x) #,kernel_regularizer=l1_l2(l1=0.0001, l2=0.0001)
+    x = BatchNormalization()(x)   
+    x = Dropout(0.2)(x) 
+    x = Dense(128)(x) #,kernel_regularizer=l2(0.0001)
+    x = BatchNormalization()(x)   
+    x = Dropout(0.2)(x)
+    
+    # Concat
+    x = concatenate([ex,  x])
+    x = Dense(16)(x)
+    x = BatchNormalization()(x)   
+    x = Dropout(0.2)(x)  
+    out = Dense(1)(x)
+    model = Model(embedding_inp+[numerical_inp], out)#
+
+    optimizer = optimizers.Adam(lr=0.001)
+    model.compile(loss='mean_squared_error', optimizer=optimizer) #
+    #print(model.summary())
+    return model  
