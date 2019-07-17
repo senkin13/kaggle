@@ -24,24 +24,18 @@ def rmse(y_true, y_pred):
 train = pd.read_csv('../input/train.csv')
 test = pd.read_csv('../input/test.csv')
 
-for df in [train, test]:
-    df['first_active_month'].fillna('2017-09',inplace=True)
-    df['first_active_month'] = pd.to_datetime(df['first_active_month'])
-    df['year'] = df['first_active_month'].dt.year
-    df['month'] = df['first_active_month'].dt.month
-    df['elapsed_time'] = (datetime.date(2018, 2, 1) - df['first_active_month'].dt.date).dt.days
-
-# Submodel
-hist_new_oof_unique = pd.read_pickle('../feature/submodel/hist_new_oof_unique.pkl')    
-hist_new_pred_unique = pd.read_pickle('../feature/submodel/hist_new_pred_unique.pkl')    
-hist_oof_unique = pd.read_pickle('../feature/submodel/hist_oof_unique.pkl')    
-hist1_oof_unique = pd.read_pickle('../feature/submodel/hist1_oof_unique.pkl')  
-hist_pred_unique = pd.read_pickle('../feature/submodel/hist_pred_unique.pkl')    
-new_oof_unique = pd.read_pickle('../feature/submodel/new_oof_unique.pkl')    
-new_pred_unique = pd.read_pickle('../feature/submodel/new_pred_unique.pkl') 
-hist1_pred_unique = pd.read_pickle('../feature/submodel/hist1_pred_unique.pkl')
+# # Submodel
+# hist_new_oof_unique = pd.read_pickle('../feature/submodel/hist_new_oof_unique.pkl')    
+# hist_new_pred_unique = pd.read_pickle('../feature/submodel/hist_new_pred_unique.pkl')    
+# hist_oof_unique = pd.read_pickle('../feature/submodel/hist_oof_unique.pkl')    
+# hist1_oof_unique = pd.read_pickle('../feature/submodel/hist1_oof_unique.pkl')  
+# hist_pred_unique = pd.read_pickle('../feature/submodel/hist_pred_unique.pkl')    
+# new_oof_unique = pd.read_pickle('../feature/submodel/new_oof_unique.pkl')    
+# new_pred_unique = pd.read_pickle('../feature/submodel/new_pred_unique.pkl') 
+# hist1_pred_unique = pd.read_pickle('../feature/submodel/hist1_pred_unique.pkl')
 
 
+#################### Level1 - LGB&CAT&NN ####################
 # OOF Train
 ## with submodel
 lgb_v2_3628287_oof = pd.read_csv('../4590/lgb_v2_oof_3.6282879167899678_4590.csv').rename(columns={'target':'lgb_v2_3628287'})
@@ -260,7 +254,7 @@ for v in [nn_v2_3652412_pred, nn_v2_3652279_pred, nn_v2_3651086_pred, nn_v2_3650
     test = test.merge(v,on='card_id',how='left')
     
     
-# Level1 - LGB
+#################### Level2 - LGB ####################
 %%time
 import lightgbm as lgb
 from sklearn.model_selection import KFold,StratifiedKFold,GroupKFold,RepeatedKFold
@@ -381,15 +375,15 @@ for n_fold, (train_idx, valid_idx) in enumerate(folds.split(train_df[feats], tra
 cv = rmse(train_df['target'],  oof_preds)
 print('Full OOF RMSE %.6f' % cv)  
 
-# oof_df = pd.DataFrame()
-# oof_df['card_id'] = train_df['card_id']
-# oof_df['target'] = oof_preds
-# oof_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_lgb_oof_' + str(cv) + '_' + str(seed) + '.csv',index=False)
+oof_df = pd.DataFrame()
+oof_df['card_id'] = train_df['card_id']
+oof_df['target'] = oof_preds
+oof_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_lgb_oof_' + str(cv) + '_' + str(seed) + '.csv',index=False)
 
-# test_df['target'] = sub_preds
-# test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_lgb_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)   
+test_df['target'] = sub_preds
+test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_lgb_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)   
 
-# Level1 - ExtraTree
+#################### Level2 - ExtraTree ####################
 from sklearn.ensemble import ExtraTreesRegressor
 
 
@@ -479,15 +473,15 @@ for n_fold, (train_idx, valid_idx) in enumerate(folds.split(train_df[feats], tra
 cv = rmse(train_df['target'],  oof_preds)
 print('Full OOF RMSE %.6f' % cv)  
     
-# oof_df = pd.DataFrame()
-# oof_df['card_id'] = train_df['card_id']
-# oof_df['target'] = oof_preds
-# oof_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_et_oof_' + str(cv) + '_' + str(seed) + '.csv',index=False)
+oof_df = pd.DataFrame()
+oof_df['card_id'] = train_df['card_id']
+oof_df['target'] = oof_preds
+oof_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_et_oof_' + str(cv) + '_' + str(seed) + '.csv',index=False)
 
-# test_df['target'] = sub_preds
-# test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_et_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)           
+test_df['target'] = sub_preds
+test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_et_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)           
 
-# Level1 -NN
+#################### Level2 -NN ####################
 from keras.models import Sequential, Model
 from keras.layers import Input, Dense, Embedding, Concatenate, Flatten, BatchNormalization, Dropout, concatenate
 from keras.callbacks import ModelCheckpoint
@@ -658,15 +652,15 @@ for n_fold, (train_idx, valid_idx) in enumerate(folds.split(train_df[feats], tra
 cv = rmse(train_df['target'],  oof_preds)
 print('Full OOF RMSE %.6f' % cv)  
     
-# oof_df = pd.DataFrame()
-# oof_df['card_id'] = train_df['card_id']
-# oof_df['target'] = oof_preds
-# oof_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_nn_oof_' + str(cv) + '_' + str(seed) + '.csv',index=False)
+oof_df = pd.DataFrame()
+oof_df['card_id'] = train_df['card_id']
+oof_df['target'] = oof_preds
+oof_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_nn_oof_' + str(cv) + '_' + str(seed) + '.csv',index=False)
 
-# test_df['target'] = sub_preds
-# test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_nn_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)           
+test_df['target'] = sub_preds
+test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_nn_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)           
 
-# Level1 - Linear Regression
+#################### Level2 - Linear Regression ####################
 from sklearn.linear_model import Ridge
 from keras.models import Sequential, Model
 
@@ -760,15 +754,15 @@ for n_fold, (train_idx, valid_idx) in enumerate(folds.split(train_df[feats], tra
 cv = rmse(train_df['target'],  oof_preds)
 print('Full OOF RMSE %.6f' % cv)  
     
-# oof_df = pd.DataFrame()
-# oof_df['card_id'] = train_df['card_id']
-# oof_df['target'] = oof_preds
-# oof_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_ridge_oof_' + str(cv) + '_' + str(seed) + '.csv',index=False)
+oof_df = pd.DataFrame()
+oof_df['card_id'] = train_df['card_id']
+oof_df['target'] = oof_preds
+oof_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_ridge_oof_' + str(cv) + '_' + str(seed) + '.csv',index=False)
 
-# test_df['target'] = sub_preds
-# test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_ridge_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)           
+test_df['target'] = sub_preds
+test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_ridge_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)           
 
-# Level2 - Blending
+#################### Level3 - Blending ####################
 %%time
 train = pd.read_csv('../input/train.csv',usecols=['card_id','target'])
 test = pd.read_csv('../input/test.csv',usecols=['card_id'])
@@ -809,7 +803,6 @@ test = test.merge(without_pred,on='card_id',how='left')
 test = test.merge(rank_pred,on='card_id',how='left')    
 
 
-%%time
 from sklearn.isotonic import IsotonicRegression
 
 #################################################
@@ -868,7 +861,6 @@ test['blend'] = test['et_isotonic']*0.3 + test['nn_isotonic']*0.35 + test['lgb_i
 test['target'] = test['et_isotonic']*0.3 + test['nn_isotonic']*0.35 + test['lgb_isotonic']*0.35
 
 # Replace Nooutliers
-%%time
 #################################################
 # without outliers
 ###############################################
