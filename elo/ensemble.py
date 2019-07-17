@@ -25,14 +25,14 @@ train = pd.read_csv('../input/train.csv')
 test = pd.read_csv('../input/test.csv')
 
 # # Submodel
-# hist_new_oof_unique = pd.read_pickle('../feature/submodel/hist_new_oof_unique.pkl')    
-# hist_new_pred_unique = pd.read_pickle('../feature/submodel/hist_new_pred_unique.pkl')    
-# hist_oof_unique = pd.read_pickle('../feature/submodel/hist_oof_unique.pkl')    
-# hist1_oof_unique = pd.read_pickle('../feature/submodel/hist1_oof_unique.pkl')  
-# hist_pred_unique = pd.read_pickle('../feature/submodel/hist_pred_unique.pkl')    
-# new_oof_unique = pd.read_pickle('../feature/submodel/new_oof_unique.pkl')    
-# new_pred_unique = pd.read_pickle('../feature/submodel/new_pred_unique.pkl') 
-# hist1_pred_unique = pd.read_pickle('../feature/submodel/hist1_pred_unique.pkl')
+hist_new_oof_unique = pd.read_pickle('../feature/submodel/hist_new_oof_unique.pkl')    
+hist_new_pred_unique = pd.read_pickle('../feature/submodel/hist_new_pred_unique.pkl')    
+hist_oof_unique = pd.read_pickle('../feature/submodel/hist_oof_unique.pkl')    
+hist1_oof_unique = pd.read_pickle('../feature/submodel/hist1_oof_unique.pkl')  
+hist_pred_unique = pd.read_pickle('../feature/submodel/hist_pred_unique.pkl')    
+new_oof_unique = pd.read_pickle('../feature/submodel/new_oof_unique.pkl')    
+new_pred_unique = pd.read_pickle('../feature/submodel/new_pred_unique.pkl') 
+hist1_pred_unique = pd.read_pickle('../feature/submodel/hist1_pred_unique.pkl')
 
 
 #################### Level1 - LGB&CAT&NN ####################
