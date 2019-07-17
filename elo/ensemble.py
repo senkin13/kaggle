@@ -763,7 +763,6 @@ test_df['target'] = sub_preds
 test_df[['card_id','target']].to_csv('../ensemble/stacking_lv1_ridge_pred_' + str(cv) + '_' + str(seed) + '.csv',index=False)           
 
 #################### Level3 - Blending ####################
-%%time
 train = pd.read_csv('../input/train.csv',usecols=['card_id','target'])
 test = pd.read_csv('../input/test.csv',usecols=['card_id'])
 
@@ -785,7 +784,19 @@ for v in [ridge_oof, et_oof, nn_oof, lgb_oof,
 for v in [ridge_pred, et_pred, nn_pred, lgb_pred, 
          ]:
     test = test.merge(v,on='card_id',how='left')
-    
+
+train['blend'] = train['ridge_oof']*0.25 + train['et_oof']*0.25  + train['nn_oof']*0.25 + train['lgb_oof']*0.25
+cv = rmse(train['target'],  train['blend'])
+print('Full OOF RMSE %.6f' % cv)  
+
+test['target'] = test['ridge_oof']*0.25 + test['et_oof']*0.25  + test['nn_oof']*0.25 + test['lgb_oof']*0.25
+        
+
+#################################################
+# postprocessing
+###############################################
+from sklearn.isotonic import IsotonicRegression
+## merge with nooutliers model
 without_oof = pd.read_csv('../nooutliers/lgb_v10_oof_1.5488890386510492.csv').reset_index(drop=True).rename(columns={'target':'without'})
 without_oof['is_outliers'] = 0
 without_outliers_oof = pd.read_csv('../nooutliers/lgb_v10_outliersoof_1.5488890386510492.csv').reset_index(drop=True).rename(columns={'target':'without'})
@@ -800,14 +811,9 @@ train = train.merge(without_oof,on='card_id',how='left')
 train = train.merge(rank_oof,on='card_id',how='left')
 
 test = test.merge(without_pred,on='card_id',how='left')
-test = test.merge(rank_pred,on='card_id',how='left')    
+test = test.merge(rank_pred,on='card_id',how='left')
 
-
-from sklearn.isotonic import IsotonicRegression
-
-#################################################
-# lgb
-###############################################
+## lgb
 cv = rmse(train['target'],  train['lgb'])
 print('LGB RMSE %.6f' % cv) 
 
@@ -821,9 +827,7 @@ print('LGB IsotonicRegression OOF RMSE %.6f' % cv)
 
 test['lgb_isotonic'] = ir_lgb.predict(test['lgb'])
 
-#################################################
-# nn
-###############################################
+## nn
 cv = rmse(train['target'],  train['nn'])
 print('NN RMSE %.6f' % cv) 
 
@@ -837,9 +841,7 @@ print('NN IsotonicRegression OOF RMSE %.6f' % cv)
 
 test['nn_isotonic'] = ir_nn.predict(test['nn'])
 
-#################################################
-# extra tree
-###############################################
+## extra tree
 cv = rmse(train['target'],  train['et'])
 print('ET RMSE %.6f' % cv) 
 
