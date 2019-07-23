@@ -8,6 +8,17 @@ color = sns.color_palette()
 
 target_col = "target"
 
+##### plot compraision
+plt.figure(figsize=(12,6))
+plt.plot(zhan_wk['wk_idnt'],zhan_wk['zhan_mape'],c='red',label='zhan')
+plt.plot(zhan_wk['wk_idnt'],zhan_wk['yonekura_mape'],c='blue',label='yonekura')
+
+plt.legend(loc='upper left')
+plt.xlabel('wk_idnt')
+plt.ylabel('mape mean')
+plt.title('benchmark')
+plt.show
+
 ##### scatter
 plt.figure(figsize=(8,6))
 plt.scatter(range(train.shape[0]), np.sort(train[target_col].values))
