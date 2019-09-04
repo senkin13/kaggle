@@ -1,7 +1,7 @@
 # kaggle
 ## Kaggle GrandMaster Certified(5 Gold)
 - ### profile
-#### https://www.kaggle.com/senkin13,Highest kaggle rating of 91 / 101097
+#### https://www.kaggle.com/senkin13
 - ### Competitions
 #### Elo Merchant Category Recommendation - (7/4128) - Solo Gold medal 
 #### Home Credit Default Risk - (8/7198) - Team Gold medal 
