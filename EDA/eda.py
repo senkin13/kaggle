@@ -11,7 +11,7 @@ target_col = "target"
 ##### plot compraision
 plt.figure(figsize=(12,6))
 plt.plot(zhan_wk['wk_idnt'],zhan_wk['zhan_mape'],c='red',label='zhan')
-plt.plot(zhan_wk['wk_idnt'],zhan_wk['yonekura_mape'],c='blue',label='yonekura')
+plt.plot(zhan_wk['wk_idnt'],zhan_wk['zhan2_mape'],c='blue',label='zhan2')
 
 plt.legend(loc='upper left')
 plt.xlabel('wk_idnt')
@@ -33,6 +33,43 @@ plt.title("Histogram of Target")
 plt.xlabel('Target', fontsize=12)
 plt.show()
 
+import matplotlib as mpl
+mpl.rcParams['agg.path.chunksize'] = 10000
+for col in [
+max_tmprt_max_yearmonth', 
+]:
+    plt.ion()
+    fig, ax = plt.subplots(figsize=(12,8))
+    plt.title('Correlation between ' + str(col) + ' and sales')
+    ax2 = ax.twinx()
+  
+    dates = mpl.dates.date2num(df['day_dt'])
+    ax2.plot_date(dates, np.sqrt(df['target']+1), '-', color='tab:red',label='target', alpha=0.3)
+ 
+    ax.plot_date(dates, df[col], '.', color='tab:blue', label=col)
+    ax.set_ylabel(col); ax2.set_ylabel('target')
+    ax.legend(loc='upper left'); ax2.legend(loc='upper right')
+    plt.ioff()    
+    plt.show()
+
+##### Scatter plot between target and prediction
+reg_cd = 63
+region_dense_region = region_dense[region_dense['reg_cd']==reg_cd]
+
+def plot_oof_preds(llim, ulim):
+        plt.figure(figsize=(6,6))
+        sns.scatterplot(x='mape_zhan',y='mape_zhan2',
+                        data=region_dense_region[['mape_zhan', 'mape_zhan2']],s=200);
+        plt.xlim((llim, ulim))
+        plt.ylim((llim, ulim))
+        plt.plot([llim, ulim], [llim, ulim])
+        plt.xlabel('mape_zhan')
+        plt.ylabel('mape_zhan2')
+        plt.title('Region ' + str(reg_cd) + ' Mape Benchmark', fontsize=18)
+        plt.show()
+
+plot_oof_preds(0, 6)
+
 ##### Scatter plot the real time to failure vs predicted (Testing Set)
 plt.figure(figsize=(6, 6))
 plt.scatter(y_test.values.flatten(), predictions)
@@ -50,6 +87,11 @@ ax = sns.distplot(train["target"].values, bins=200, kde=False)
 ax.set_xlabel('target', fontsize=15)
 ax.set_ylabel('target', fontsize=15)
 ax.set_title("target Histogram", fontsize=20)
+
+##### group barplot 
+plt.figure(figsize=(16, 10))
+sns.barplot(x="wk_idnt", hue="fr_ord_main_reg_cd", y="prd_sls_ratio", data=region_dense)
+plt.show()
 
 ##### barplot
 cnt_srs=train.groupby("feature_1").target.mean()
