@@ -6,6 +6,11 @@ import seaborn as sns
 color = sns.color_palette()
 %matplotlib inline
 
+pd.set_option('display.max_rows', 1000)
+pd.set_option('display.max_columns', 1000)
+pd.set_option('display.width', 1000)
+pd.set_option('display.max_colwidth', 1000)
+
 target_col = "target"
 
 ##### plot compraision
