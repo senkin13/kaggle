@@ -1,0 +1,5 @@
+{"input_path":"./input/",
+"features_path":"./features/",
+"model_path": "./model/", 
+"ensemble_path": "./ensemble/", 
+"sub_path": "./sub/"}
