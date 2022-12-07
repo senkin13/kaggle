@@ -115,16 +115,6 @@ nvidia drivers v.466.47
 
 ### DATA SETUP
 
-(assumes the [Kaggle API](https://github.com/Kaggle/kaggle-api) is installed)
-
-
-
-### shell
-
-below are the shell commands used in each step, as run from the top level directory
-
-
-
 mkdir -p input features model sub
 
 - download all data to input
