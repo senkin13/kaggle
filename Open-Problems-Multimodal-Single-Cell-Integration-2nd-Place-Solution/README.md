@@ -7,12 +7,6 @@ This repository is the 2nd place solutions for the  [Kaggle - Open Problems - Mu
 
 It contains  two parts from [senkin13](https://www.kaggle.com/competitions/open-problems-multimodal/discussion/366453) and [tmp](https://www.kaggle.com/competitions/open-problems-multimodal/discussion/366476) . 
 
-
-
-If you run into any trouble with the setup/code or have any questions please contact [tmp](https://github.com/baosenguo) at [baosenguo@163.com](baosenguo@163.com) and [senkin13](https://github.com/senkin13) at [senkin13@hotmail.com](senkin13@hotmail.com).
-
-
-
 ---
 
 ## tmp's part
