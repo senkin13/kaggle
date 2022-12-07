@@ -97,7 +97,7 @@ both mlp and lgb used the same features introduced above.
 
 (The following specs were used to create the original solution)
 
-Windows 10 (4 TB boot disk, 64 vCPUs, 300 GB memory)
+Windows 10 (4 TB boot disk, 64 vCPUs, 256 GB memory)
 1 x NVIDIA TITAN RTX
 
 
