@@ -5,5 +5,5 @@ sklearn==0.24.2
 joblib==1.0.1
 lightgbm==3.2.1
 tqdm==4.61.0
-tensorflow==2.9.2
+tensorflow==2.9.3
 tensorflow_addons==0.18.0
